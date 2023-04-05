@@ -2,7 +2,7 @@
 
 This script allows you to download YouTube videos or playlists and save them to your local disk. It also supports video and audio formats, codecs, and other customizations.
 
-It was entirely design and implemented by ChatGPT 4.0 following prompts by @chatgptdev.
+It was entirely designed and implemented by ChatGPT 4.0 following prompts by @chatgptdev.
 
 ## Requirements
 
