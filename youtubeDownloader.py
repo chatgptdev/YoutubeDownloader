@@ -36,7 +36,28 @@ def parse_arguments():
     parser.add_argument("--video-codec", help="The desired video codec (e.g., 'h264', 'vp9'). If provided, the program will download videos with the specified codec.")
     parser.add_argument("--audio-codec", help="The desired audio codec (e.g., 'aac', 'opus'). If provided, the program will download audio with the specified codec.")
     parser.add_argument("--metadata", nargs="+", help="Custom metadata to set for the downloaded video(s) in the format 'key=value'. Multiple metadata fields can be specified.")
+    parser.add_argument("--info", action="store_true", help="If set, display technical information about the video without downloading it.")
     return parser.parse_args()
+    
+def display_video_info(url, proxy):
+    ydl_opts = {
+        "proxy": proxy,
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(url, download=False)
+
+        if info and 'subtitles' in info:
+            print("\nAvailable subtitles:")
+            for lang, _ in info['subtitles'].items():
+                print(lang)
+        else:
+            print("\nNo subtitles available.")
+
+        print("\nAvailable formats:")
+        if info and 'formats' in info:
+            for f in info['formats']:
+                print(f"{f['format_id']} - {f['ext']} - {f['width']}x{f['height']} - {f['format_note']} - {f['vcodec']} - {f['acodec']}")
 
 
 def download_video(url, output_dir, video_format, audio_format, is_playlist, subtitles, quality, limit_speed, proxy, video_codec, audio_codec, metadata):
@@ -88,7 +109,11 @@ def download_video(url, output_dir, video_format, audio_format, is_playlist, sub
 
 def main():
     args = parse_arguments()
-    download_video(args.url, args.output, args.video_format, args.audio_format, args.playlist, args.subtitles, args.quality, args.limit, args.proxy, args.video_codec, args.audio_codec, args.metadata)
+    if args.info:
+        display_video_info(args.url, args.proxy)
+    else:
+        download_video(args.url, args.output, args.video_format, args.audio_format, args.playlist, args.subtitles, args.quality, args.limit, args.proxy, args.video_codec, args.audio_codec, args.metadata)
+
 
 if __name__ == "__main__":
     main()
